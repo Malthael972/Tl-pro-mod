@@ -10,13 +10,13 @@ Player.Update.hook((original, self, i) => {
 
     const safe = (item) => item && item.type !== 0;
 
-    // Apply defense manually from vanity slots
+    // Add defense from vanity
     if (safe(headSlot)) self.statDefense += headSlot.defense;
     if (safe(bodySlot)) self.statDefense += bodySlot.defense;
     if (safe(legSlot))  self.statDefense += legSlot.defense;
 
-    // Manually apply armor effects (damage, speed, crit, etc.)
-    if (safe(headSlot)) headSlot.UpdateEquip(self);
-    if (safe(bodySlot)) bodySlot.UpdateEquip(self);
-    if (safe(legSlot))  legSlot.UpdateEquip(self);
+    // Call UpdateEquip to apply other stats like melee speed, damage, crit, etc.
+    if (safe(headSlot) && typeof headSlot.UpdateEquip === "function") headSlot.UpdateEquip(self);
+    if (safe(bodySlot) && typeof bodySlot.UpdateEquip === "function") bodySlot.UpdateEquip(self);
+    if (safe(legSlot) && typeof legSlot.UpdateEquip === "function")  legSlot.UpdateEquip(self);
 });
