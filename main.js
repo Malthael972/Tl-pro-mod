@@ -12,18 +12,23 @@ if (Player.Update && Player.Update.hook) {
         // Add defense from vanity slots
         self.statDefense += (vanityHead.defense + vanityBody.defense + vanityLegs.defense);
 
-        // Apply individual bonuses
-        if (vanityHead.type > 0) Item.create(vanityHead.type).updateEquip(self);
-        if (vanityBody.type > 0) Item.create(vanityBody.type).updateEquip(self);
-        if (vanityLegs.type > 0) Item.create(vanityLegs.type).updateEquip(self);
+        // Create item instances
+        let headItem = new Item();
+        let bodyItem = new Item();
+        let legItem = new Item();
 
-        // Check and apply set bonus
-        const headItem = Item.create(vanityHead.type);
-        const bodyItem = Item.create(vanityBody.type);
-        const legsItem = Item.create(vanityLegs.type);
+        headItem.SetDefaults(vanityHead.type);
+        bodyItem.SetDefaults(vanityBody.type);
+        legItem.SetDefaults(vanityLegs.type);
 
-        if (bodyItem.isArmorSet && bodyItem.isArmorSet(headItem, legsItem)) {
-            bodyItem.updateArmorSet(self);
+        // Apply individual piece effects
+        if (vanityHead.type > 0) headItem.UpdateEquip(self);
+        if (vanityBody.type > 0) bodyItem.UpdateEquip(self);
+        if (vanityLegs.type > 0) legItem.UpdateEquip(self);
+
+        // Apply set bonus if valid
+        if (bodyItem.IsArmorSet && bodyItem.IsArmorSet(headItem, legItem)) {
+            bodyItem.UpdateArmorSet(self);
         }
     });
 }
