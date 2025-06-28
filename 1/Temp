@@ -1,37 +1,12 @@
 const Player = new NativeClass("Terraria", "Player");
+const Main = new NativeClass("Terraria", "Main");
 
-let Timer = 0;
 
-Player.UpdateEquips.hook((original, self, i) => {
-  original(self, i);
+Player.Update.hook((original, self, i) => {
+    original(self, i);
+    const headSlot = self.armor[10];
+    const bodySlot = self.armor[11];
+    const legSlot = self.armor[12];
 
-  if (Timer++ % 300 === 0) {
-    ApplyVanityArmorStats(self);
-  }
+    self.statDefense += (headSlot.defense + bodySlot.defense + legSlot.defense); 
 });
-
-function ApplyVanityArmorStats(player) {
-  const head = player.armor[10]; // Vanity Head
-  const body = player.armor[11]; // Vanity Body
-  const legs = player.armor[12]; // Vanity Legs
-
-  if (head?.netID > 0) {
-    player.statDefense += head.defense;
-    player.GrantArmorBenefits(head);
-  }
-
-  if (body?.netID > 0) {
-    player.statDefense += body.defense;
-    player.GrantArmorBenefits(body);
-  }
-
-  if (legs?.netID > 0) {
-    player.statDefense += legs.defense;
-    player.GrantArmorBenefits(legs);
-  }
-
-  // Basic set detection (you can customize this per set)
-  if (head?.type === body?.type - 1 && head?.type === legs?.type - 2) {
-    player.setBonus = "Vanity Set Bonus: +5% all damage";
-    player.allDamage += 0.05;
-  }
