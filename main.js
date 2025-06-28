@@ -1,29 +1,29 @@
 const Player = new NativeClass("Terraria", "Player");
-const Main = new NativeClass("Terraria", "Main");
 const Item = new NativeClass("Terraria", "Item");
 
-Player.Update.hook((original, self, i) => {
-    original(self, i);
+if (Player.Update && Player.Update.hook) {
+    Player.Update.hook((original, self, i) => {
+        original(self, i);
 
-    const head = self.armor[10];  // Vanity head
-    const body = self.armor[11];  // Vanity body
-    const legs = self.armor[12];  // Vanity legs
+        const vanityHead = self.armor[10];
+        const vanityBody = self.armor[11];
+        const vanityLegs = self.armor[12];
 
-    // Add defense from vanity slots
-    self.statDefense += (head.defense + body.defense + legs.defense);
+        // Add defense from vanity slots
+        self.statDefense += (vanityHead.defense + vanityBody.defense + vanityLegs.defense);
 
-    // Create Item instances from vanity armor
-    const headItem = Item.create(head.type);
-    const bodyItem = Item.create(body.type);
-    const legItem = Item.create(legs.type);
+        // Apply individual bonuses
+        if (vanityHead.type > 0) Item.create(vanityHead.type).updateEquip(self);
+        if (vanityBody.type > 0) Item.create(vanityBody.type).updateEquip(self);
+        if (vanityLegs.type > 0) Item.create(vanityLegs.type).updateEquip(self);
 
-    // Apply individual bonuses from each piece
-    headItem.updateEquip(self);
-    bodyItem.updateEquip(self);
-    legItem.updateEquip(self);
+        // Check and apply set bonus
+        const headItem = Item.create(vanityHead.type);
+        const bodyItem = Item.create(vanityBody.type);
+        const legsItem = Item.create(vanityLegs.type);
 
-    // Apply armor set bonus if valid set
-    if (bodyItem.isArmorSet(headItem, legItem)) {
-        bodyItem.updateArmorSet(self);
-    }
-});
+        if (bodyItem.isArmorSet && bodyItem.isArmorSet(headItem, legsItem)) {
+            bodyItem.updateArmorSet(self);
+        }
+    });
+}
