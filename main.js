@@ -5,34 +5,35 @@ let Timer = 0;
 Player.UpdateEquips.hook((original, self, i) => {
   original(self, i);
 
-  if (Timer++ % 300 === 0) {
-    ApplyVanityArmorStats(self);
-  }
+  // Call this every tick, no need to delay — TL Pro handles it fine
+  ApplyVanityArmor(self);
 });
 
-function ApplyVanityArmorStats(player) {
-  const head = player.armor[10]; // Vanity Head
-  const body = player.armor[11]; // Vanity Body
-  const legs = player.armor[12]; // Vanity Legs
+function ApplyVanityArmor(player) {
+  const head = player.armor[10]; // Vanity head
+  const body = player.armor[11]; // Vanity body
+  const legs = player.armor[12]; // Vanity legs
 
-  if (head?.netID > 0) {
+  // Defensive stat application
+  if (head?.netID !== 0) {
     player.statDefense += head.defense;
     player.GrantArmorBenefits(head);
   }
-
-  if (body?.netID > 0) {
+  if (body?.netID !== 0) {
     player.statDefense += body.defense;
     player.GrantArmorBenefits(body);
   }
-
-  if (legs?.netID > 0) {
+  if (legs?.netID !== 0) {
     player.statDefense += legs.defense;
     player.GrantArmorBenefits(legs);
   }
 
-  // Basic set detection (you can customize this per set)
-  if (head?.type === body?.type - 1 && head?.type === legs?.type - 2) {
-    player.setBonus = "Vanity Set Bonus: +5% all damage";
-    player.allDamage += 0.05;
+  // Set bonus check — basic example: Silver Armor (59,60,61)
+  const types = [head?.type, body?.type, legs?.type];
+  if (types[0] === 59 && types[1] === 60 && types[2] === 61) {
+    player.setBonus = "Vanity Silver Set: +20 max HP";
+    player.statLifeMax2 += 20;
   }
+
+  // You can copy this block and add checks for other armor sets
 }
