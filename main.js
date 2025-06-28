@@ -1,34 +1,37 @@
 const Player = new NativeClass("Terraria", "Player");
-const Item = new NativeClass("Terraria", "Item");
+const Main = new NativeClass("Terraria", "Main");
 
-if (Player.Update && Player.Update.hook) {
-    Player.Update.hook((original, self, i) => {
-        original(self, i);
+Player.Update.hook((original, self, i) => {
+    original(self, i);
 
-        const vanityHead = self.armor[10];
-        const vanityBody = self.armor[11];
-        const vanityLegs = self.armor[12];
+    const headSlot = self.armor[10];  // Vanity head
+    const bodySlot = self.armor[11];  // Vanity body
+    const legSlot = self.armor[12];   // Vanity legs
 
-        // Add defense from vanity slots
-        self.statDefense += (vanityHead.defense + vanityBody.defense + vanityLegs.defense);
+    const vanityArmor = [headSlot, bodySlot, legSlot];
 
-        // Create item instances
-        let headItem = new Item();
-        let bodyItem = new Item();
-        let legItem = new Item();
+    for (const item of vanityArmor) {
+        if (!item || !item.IsAir()) continue;
 
-        headItem.SetDefaults(vanityHead.type);
-        bodyItem.SetDefaults(vanityBody.type);
-        legItem.SetDefaults(vanityLegs.type);
+        // Add defense from vanity items
+        self.statDefense += item.defense;
 
-        // Apply individual piece effects
-        if (vanityHead.type > 0) headItem.UpdateEquip(self);
-        if (vanityBody.type > 0) bodyItem.UpdateEquip(self);
-        if (vanityLegs.type > 0) legItem.UpdateEquip(self);
+        // If the item has known stat boosts (manually extended below)
+        self.statManaMax2 += item.statManaMax2 || 0;
+        self.statLifeMax2 += item.statLifeMax2 || 0;
+        self.statManaRegenBonus += item.manaRegenBonus || 0;
 
-        // Apply set bonus if valid
-        if (bodyItem.IsArmorSet && bodyItem.IsArmorSet(headItem, legItem)) {
-            bodyItem.UpdateArmorSet(self);
-        }
-    });
-}
+        self.meleeSpeed += item.meleeSpeed || 0;
+        self.moveSpeed += item.moveSpeed || 0;
+        self.maxRunSpeed += item.maxRunSpeed || 0;
+
+        self.magicDamage += item.magicDamage || 0;
+        self.meleeDamage += item.meleeDamage || 0;
+        self.rangedDamage += item.rangedDamage || 0;
+        self.minionDamage += item.minionDamage || 0;
+
+        self.magicCrit += item.magicCrit || 0;
+        self.meleeCrit += item.meleeCrit || 0;
+        self.rangedCrit += item.rangedCrit || 0;
+    }
+});
