@@ -4,9 +4,43 @@ const Main = new NativeClass("Terraria", "Main");
 
 Player.Update.hook((original, self, i) => {
     original(self, i);
-    const headSlot = self.armor[10];
-    const bodySlot = self.armor[11];
-    const legSlot = self.armor[12];
+    const head = self.armor[10];
+    const body = self.armor[11];
+    const legs = self.armor[12];
 
-    self.statDefense += (headSlot.defense + bodySlot.defense + legSlot.defense); 
+    // Apply defense
+    self.statDefense += (head.defense + body.defense + legs.defense);
+
+    // Apply melee speed
+    self.meleeSpeed += (head.meleeSpeed + body.meleeSpeed + legs.meleeSpeed);
+
+    // Apply melee damage
+    self.meleeDamage += (head.meleeDamage + body.meleeDamage + legs.meleeDamage);
+
+    // Apply ranged damage
+    self.rangedDamage += (head.rangedDamage + body.rangedDamage + legs.rangedDamage);
+
+    // Apply magic damage
+    self.magicDamage += (head.magicDamage + body.magicDamage + legs.magicDamage);
+
+    // Apply summon damage
+    self.minionDamage += (head.minionDamage + body.minionDamage + legs.minionDamage);
+
+    // Apply crit chances
+    self.meleeCrit += (head.meleeCrit + body.meleeCrit + legs.meleeCrit);
+    self.rangedCrit += (head.rangedCrit + body.rangedCrit + legs.rangedCrit);
+    self.magicCrit += (head.magicCrit + body.magicCrit + legs.magicCrit);
+
+    // Apply movement speed
+    self.moveSpeed += (head.moveSpeed + body.moveSpeed + legs.moveSpeed);
+
+    // Apply max life/mana
+    self.statLifeMax2 += (head.life + body.life + legs.life);
+    self.statManaMax2 += (head.mana + body.mana + legs.mana);
+
+    // Apply mana cost reduction
+    self.manaCost -= (head.manaCost + body.manaCost + legs.manaCost);
+
+    // Apply damage reduction (endurance)
+    self.endurance += (head.endurance + body.endurance + legs.endurance); 
 });
