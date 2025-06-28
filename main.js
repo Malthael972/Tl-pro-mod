@@ -8,30 +8,18 @@ Player.Update.hook((original, self, i) => {
     const bodySlot = self.armor[11];  // Vanity body
     const legSlot = self.armor[12];   // Vanity legs
 
-    const vanityArmor = [headSlot, bodySlot, legSlot];
+    // Avoid errors if one of the vanity slots is empty
+    const safe = (item, stat) => item && item[stat] ? item[stat] : 0;
 
-    for (const item of vanityArmor) {
-        if (!item || !item.IsAir()) continue;
-
-        // Add defense from vanity items
-        self.statDefense += item.defense;
-
-        // If the item has known stat boosts (manually extended below)
-        self.statManaMax2 += item.statManaMax2 || 0;
-        self.statLifeMax2 += item.statLifeMax2 || 0;
-        self.statManaRegenBonus += item.manaRegenBonus || 0;
-
-        self.meleeSpeed += item.meleeSpeed || 0;
-        self.moveSpeed += item.moveSpeed || 0;
-        self.maxRunSpeed += item.maxRunSpeed || 0;
-
-        self.magicDamage += item.magicDamage || 0;
-        self.meleeDamage += item.meleeDamage || 0;
-        self.rangedDamage += item.rangedDamage || 0;
-        self.minionDamage += item.minionDamage || 0;
-
-        self.magicCrit += item.magicCrit || 0;
-        self.meleeCrit += item.meleeCrit || 0;
-        self.rangedCrit += item.rangedCrit || 0;
-    }
+    self.statDefense += safe(headSlot, "defense") + safe(bodySlot, "defense") + safe(legSlot, "defense");
+    self.meleeSpeed  += safe(headSlot, "meleeSpeed") + safe(bodySlot, "meleeSpeed") + safe(legSlot, "meleeSpeed");
+    self.moveSpeed   += safe(headSlot, "moveSpeed") + safe(bodySlot, "moveSpeed") + safe(legSlot, "moveSpeed");
+    self.maxRunSpeed += safe(headSlot, "maxRunSpeed") + safe(bodySlot, "maxRunSpeed") + safe(legSlot, "maxRunSpeed");
+    self.magicDamage += safe(headSlot, "magicDamage") + safe(bodySlot, "magicDamage") + safe(legSlot, "magicDamage");
+    self.meleeDamage += safe(headSlot, "meleeDamage") + safe(bodySlot, "meleeDamage") + safe(legSlot, "meleeDamage");
+    self.rangedDamage += safe(headSlot, "rangedDamage") + safe(bodySlot, "rangedDamage") + safe(legSlot, "rangedDamage");
+    self.minionDamage += safe(headSlot, "minionDamage") + safe(bodySlot, "minionDamage") + safe(legSlot, "minionDamage");
+    self.magicCrit   += safe(headSlot, "magicCrit") + safe(bodySlot, "magicCrit") + safe(legSlot, "magicCrit");
+    self.meleeCrit   += safe(headSlot, "meleeCrit") + safe(bodySlot, "meleeCrit") + safe(legSlot, "meleeCrit");
+    self.rangedCrit  += safe(headSlot, "rangedCrit") + safe(bodySlot, "rangedCrit") + safe(legSlot, "rangedCrit");
 });
