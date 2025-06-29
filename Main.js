@@ -1,16 +1,11 @@
 const Player = new NativeClass("Terraria", "Player");
+const Main = new NativeClass("Terraria", "Main");
 
-Player.UpdateEquips.hook((original, self, i) => {
+Player.Update.hook((original, self, i) => {
     original(self, i);
+    const headSlot = self.armor[10];  // Vanity head
+    const bodySlot = self.armor[11];  // Vanity body
+    const legSlot = self.armor[12];   // Vanity legs
 
-    for (let slot = 3; slot <= 8; slot++) { // accessory slots
-        const item = self.armor[slot];
-        if (!item || item.netID === 0) continue;
-
-        if (item.name === "Molten Quiver") {
-            // Override vanilla 10% with custom 25%
-            self.rangedDamage -= 0.10; // remove the default bonus
-            self.rangedDamage += 0.25; // apply our bonus
-        }
-    }
+    self.statDefense += (headSlot.defense + bodySlot.defense + legSlot.defense +15); 
 });
